@@ -51,7 +51,7 @@ def welcome():
         f"/api/v1.0/tobs<br/>"
         f"/api/v1.0/start date<br/>"
         f"/api/v1.0/start date/end date<br/>^<br/>"
-        "Please for start date and end date enter the date in the format of 'yyyy-mm-dd<br/>"
+        "Please for start date and end date, enter the date in the format of 'yyyy-mm-dd' replacing 'start date' and 'end date'<br/>"
         "Data is between 2010-01-01 and 2017-08-23"
     )
 

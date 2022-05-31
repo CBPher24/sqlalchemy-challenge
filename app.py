@@ -59,7 +59,8 @@ def welcome():
 @app.route("/api/v1.0/precipitation")
 def precipitation():
 
-    year_prec = last_year.drop(['id', 'station', 'date', 'tobs'], axis=1).reset_index()
+    meas_date = pd.to_datetime(meas_db["date"])
+    year_prec = meas_date.drop(columns=['id', 'station', 'tobs']).reset_index()
     prec_html = year_prec.to_dict(orient="split")
 
     return jsonify(prec_html)
@@ -70,15 +71,15 @@ def stations():
 
     stations = meas_db.groupby("station").count().sort_values(["id"], ascending=False)
     stations = stations.drop(['id', 'date', 'prcp', 'tobs'], axis=1).reset_index()
-    stat_html = stations.to_dict(orient="split")
+    stat_html = stations.to_dict(orient="list")
 
     return jsonify(stat_html)
 
 @app.route("/api/v1.0/tobs")
 def tobs():
 
-    act_stat = last_year.loc[last_year["station"] =='USC00519281']
-    act_stat = act_stat.drop(['id', 'date', 'station', 'tobs'], axis=1).reset_index()
+    act_stat = last_year.loc[last_year["station"] =='USC00519281'].reset_index()
+    act_stat = act_stat.drop(['id', 'dateind', 'station', 'prcp'], axis=1)
     act_stat_html = act_stat.to_dict(orient="split")
 
     return jsonify(act_stat_html)

@@ -49,8 +49,10 @@ def welcome():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0/start<br/>"
-        f"/api/v1.0/start/end<br/>"
+        f"/api/v1.0/start date<br/>"
+        f"/api/v1.0/start date/end date<br/>^<br/>"
+        "Please for start date and end date enter the date in the format of 'yyyy-mm-dd<br/>"
+        "Data is between 2010-01-01 and 2017-08-23"
     )
 
 
@@ -81,14 +83,23 @@ def tobs():
 
     return jsonify(act_stat_html)
 
-@app.route("/api/v1.0/8-24-16_to_8-23-17")
-def start_to_end():
+@app.route("/api/v1.0/<start>")
+def start(start):
 
-    act_stat_1yr = last_year.loc[last_year["station"] =='USC00519281'].reset_index()
-    act_stat_1yr = act_stat_1yr["tobs"].describe().reset_index()
-    act_stat_1yr_dict = act_stat_1yr.to_dict(orient="split")
+    start_que = meas_db.loc[meas_db["date"] >= start]
+    start_anly = start_que["tobs"].agg(["min","max","mean"]).reset_index()
+    start_json = start_anly.to_dict(orient="split")
 
-    return jsonify(act_stat_1yr_dict)   
+    return jsonify(start_json)   
+
+@app.route("/api/v1.0/<start>/<end>")
+def start_to_end(start, end):
+
+    start_que = meas_db.loc[(meas_db["date"] >= start) & (meas_db["date"] <= end)]
+    start_anly = start_que["tobs"].agg(["min","max","mean"]).reset_index()
+    start_json = start_anly.to_dict(orient="split")
+
+    return jsonify(start_json) 
 
 if __name__ == '__main__':
     app.run(debug=True)
